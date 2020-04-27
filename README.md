@@ -1,4 +1,4 @@
-# build-FreeFileSync-Raspberry-pi
+# build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool. However, despite its open source nature, there is no build instruction for it. 
 
 This repo records my own way of building FreeFileSync on Raspberry Pi with Raspbian Feb 2020 installed. 
