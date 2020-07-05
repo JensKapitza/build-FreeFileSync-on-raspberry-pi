@@ -5,9 +5,9 @@ This repo records my own way of building FreeFileSync on Raspberry Pi with Raspb
 
 ## 0. Download and extract the source code
 
-As of writing, the latest version of FreeFileSync is 10.22 and it can be downloaded from: 
+As of writing, the latest version of FreeFileSync is 10.25 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_10.22_Source.zip. 
+https://freefilesync.org/download/FreeFileSync_10.25_Source.zip.
 
 Note wget **DOES NOT** work with this URL on the first try. You can either manually download it, or try wget a second time to get the source code downloaded.
 
@@ -31,12 +31,19 @@ The following dependencies could not be installed from `apt-get` command and has
 FreeFileSync requires a c++ compiler that supports c++2a.
 The default version of gcc with Raspbian February 2020 is 8.3.0 and does not work.
 
-I followed the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 9.3.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled.
+I followed the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 10.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default: Raspberry Pi 4).
+
+Note the build will take about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
+
+```
+sudo chmod +x build_gcc.sh
+sudo bash build_gcc.sh
+```
 
 If you follow the steps correctly, you should see the new verison of g++ using "g++ -v": 
 ```
-pi@raspberrypi:~/Downloads/FreeFileSync_10.22/FreeFileSync/Source $ g++ --version
-g++ (GCC) 9.3.0
+pi@raspberrypi:~/Downloads/FreeFileSync_10.25/FreeFileSync/Source $ g++ --version
+g++ (GCC) 10.1.0
 
 ```
 
@@ -118,14 +125,12 @@ add at line 58
 ### 4.2 zen/open_ssl.cpp
 Change some function definitions to avoid compliation error with function not found:
 ```
-180c180
-< using EvpToBioFunc = int (*)(BIO* bio, EVP_PKEY* evp);
+Replace: using EvpToBioFunc = int (*)(BIO* bio, EVP_PKEY* evp);
+With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
+
 ---
-> using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
-237c237
-< int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
----
-> int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
+Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
+With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
 ```
 
 ### 4.3 [Optional] FreeFileSyc/Source/Makefile
@@ -136,16 +141,16 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 6. Compile
 
-Run "make" in folder FreeFileSync_10.22_Source/FreeFileSync/Source. 
+Run "make" in folder FreeFileSync_10.25_Source/FreeFileSync/Source. 
 
-The binary should be waiting for you in FreeFileSync_10.22_Source/FreeFileSync/Build/Bin. 
+The binary should be waiting for you in FreeFileSync_10.25_Source/FreeFileSync/Build/Bin. 
 
 ## 7. zip all dependencies
 After the executable is binary, copy all dependencies libraries to the same folder as the binary, the copy `Build/Resources` folder, zip them in a file.
 
 Then end zip file should look like this:
 ```
-Archive:  FreeFileSync_10.22_armv7l.zip
+Archive:  FreeFileSync_10.25_armv7l.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
         0  2020-04-27 22:38   Bin/
@@ -171,7 +176,18 @@ Archive:  FreeFileSync_10.22_armv7l.zip
    388959  2020-03-18 21:57   Resources/Icons.zip
    522150  2020-03-18 21:57   Resources/Languages.zip
     55006  2020-03-18 21:57   Resources/notify.wav
-
 ```
 
 Now the zip file should contain all the dependencies and the binary `Bin/FreeFileSync_armv7l` is able to run on a new raspberry pi with Raspbian OS directly.
+
+## 8. Run FreeFileSync
+Go to FreeFileSync_10.25_Source/FreeFileSync/Build/Bin:
+./FreeFileSync_armv7l
+
+## Troubleshooting
+> *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
+For FreeFileSync 10.25 you need gcc 10.1. gcc 9.3 will give you this error.
+
+> *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
+sudo ldconfig
+

@@ -3,7 +3,9 @@
 #
 #  This is the new GCC version to install.
 #
-VERSION=9.3.0
+# takes about 4 hours (Raspberry Pi 4, 4GB)
+#
+VERSION=10.1.0
 
 #
 #  For the Pi or any computer with less than 2GB of memory.
@@ -33,10 +35,15 @@ cd obj
 #  To alter the target directory set --prefix=<dir>
 #
 
-# Pi3+, Pi3, and new Pi2
-../configure --enable-languages=c,c++ --with-cpu=cortex-a53 \
+# Pi4
+../configure --enable-languages=c,c++ --with-cpu=cortex-a72 \
   --with-fpu=neon-fp-armv8 --with-float=hard --build=arm-linux-gnueabihf \
   --host=arm-linux-gnueabihf --target=arm-linux-gnueabihf --enable-checking=no
+
+# Pi3+, Pi3, and new Pi2
+#../configure --enable-languages=c,c++ --with-cpu=cortex-a53 \
+#  --with-fpu=neon-fp-armv8 --with-float=hard --build=arm-linux-gnueabihf \
+#  --host=arm-linux-gnueabihf --target=arm-linux-gnueabihf --enable-checking=no
 
 # Pi Zero's
 #../configure --enable-languages=c,d,c++,fortran --with-cpu=arm1176jzf-s \
