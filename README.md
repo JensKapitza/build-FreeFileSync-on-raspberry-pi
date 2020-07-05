@@ -182,12 +182,17 @@ Now the zip file should contain all the dependencies and the binary `Bin/FreeFil
 
 ## 8. Run FreeFileSync
 Go to FreeFileSync_10.25_Source/FreeFileSync/Build/Bin:
+```
 ./FreeFileSync_armv7l
+```
 
 ## Troubleshooting
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
+
 For FreeFileSync 10.25 you need gcc 10.1. gcc 9.3 will give you this error.
 
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
-sudo ldconfig
 
+```
+sudo ldconfig
+```
