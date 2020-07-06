@@ -33,7 +33,7 @@ The default version of gcc with Raspbian February 2020 is 8.3.0 and does not wor
 
 I followed the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 10.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default: Raspberry Pi 4).
 
-Note the build will take about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
+Note the build needs about 8 GB of free space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
 
 ```
 sudo chmod +x build_gcc.sh
@@ -141,7 +141,7 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 6. Compile
 
-Run "make" in folder FreeFileSync_10.25_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_10.25_Source/FreeFileSync/Source. 
 
 The binary should be waiting for you in FreeFileSync_10.25_Source/FreeFileSync/Build/Bin. 
 
@@ -186,7 +186,29 @@ Go to FreeFileSync_10.25_Source/FreeFileSync/Build/Bin:
 ./FreeFileSync_armv7l
 ```
 
-## Troubleshooting
+# Run FreeFileSync on another Raspberry Pi
+You don't need to build anything again. Just copy your created FreeFileSync_10.25_armv7l.zip to the other device and follow these steps:
+
+## 1. Extract the FreeFileSync_10.25_armv7l.zip you created
+extract to:
+```
+/home/pi/Desktop/FFS_10.25_ARM/
+```
+
+## 2. Copy all lib* files to /usr/lib
+
+```
+sudo cp /home/pi/Desktop/FFS_10.25_ARM/Bin/lib* /usr/lib
+sudo ldconfig
+```
+
+## 3. Run FreeFileSync
+Go to /home/pi/Desktop/FFS_10.25_ARM/Bin/
+```
+./FreeFileSync_armv7l
+```
+
+# Troubleshooting
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
 
 For FreeFileSync 10.25 you need gcc 10.1. gcc 9.3 will give you this error.
@@ -194,5 +216,6 @@ For FreeFileSync 10.25 you need gcc 10.1. gcc 9.3 will give you this error.
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
 
 ```
+sudo cp /home/pi/Desktop/FFS_10.25_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
