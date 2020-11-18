@@ -1,13 +1,13 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool. However, despite its open source nature, there is no build instruction for it. 
 
-This repo records my own way of building FreeFileSync on Raspberry Pi with Raspbian Feb 2020 installed. 
+This repo records a way of building FreeFileSync on a Raspberry Pi with Raspberry Pi OS Aug2020 installed. 
 
 ## 0. Download and extract the source code
 
 As of writing, the latest version of FreeFileSync is 10.25 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_10.25_Source.zip.
+https://freefilesync.org/download/FreeFileSync_11.3_Source.zip.
 
 Note wget **DOES NOT** work with this URL on the first try. You can either manually download it, or try wget a second time to get the source code downloaded.
 
@@ -18,7 +18,7 @@ The following dependencies need to be installed to make code compile.
 
 ```
 sudo apt-get update
-sudo apt-get install ibgtk2.0-dev
+sudo apt-get install libgtk2.0-dev
 sudo apt-get install libxtst-dev
 ```
 
@@ -31,7 +31,7 @@ The following dependencies could not be installed from `apt-get` command and has
 FreeFileSync requires a c++ compiler that supports c++2a.
 The default version of gcc with Raspbian February 2020 is 8.3.0 and does not work.
 
-I followed the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 10.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default: Raspberry Pi 4).
+Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 10.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default: Raspberry Pi 4).
 
 Note the build needs about 8 GB of free space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
 
@@ -49,7 +49,7 @@ g++ (GCC) 10.1.0
 
 ### 2.2 openssl
 
-FreeFileSYnc 10.22 requires openssl version to be `0x1010105fL` above, otherwise you got error:
+Starting with FreeFileSYnc 10.22, the openssl version needs to be `0x1010105fL` or above, otherwise you get an error:
 ```
 ../../zen/open_ssl.cpp:21:38: error: static assertion failed: OpenSSL version too old
    21 | static_assert(OPENSSL_VERSION_NUMBER >= 0x1010105fL, "OpenSSL version too old");
@@ -61,7 +61,7 @@ Tried openssl-1.1.1f but got another error:
   576 |             if (sslError == SSL_ERROR_SSL && ERR_GET_REASON(ec) == SSL_R_UNEXPECTED_EOF_WHILE_READING) //EOF: only expected for HTTP/1.0
 ```
 
-So has to go with the latest openssl 3 from github:
+So, used the latest openssl 3 from github:
 ```
 git clone git://git.openssl.org/openssl.git --depth 1
 cd openssl
@@ -70,10 +70,10 @@ make
 sudo make install
 ```
 ### 2.3 libssh2
-System provided version 1.8.0-2.1 does not work with macro not found:
+The system-provided version 1.8.0-2.1 does not work with macro not found:
 ```LIBSSH2_ERROR_CHANNEL_WINDOW_FULL```
 
-Has to build from source:
+Had to build from source:
 ```
 wget https://www.libssh2.org/download/libssh2-1.9.0.tar.gz
 tar xvf libssh2-1.9.0.tar.gz
@@ -88,9 +88,9 @@ sudo make install
 ### 2.4 libcurl
 Could not get any package from `apt-get` working so had to build from source.
 ```
-wget https://curl.haxx.se/download/curl-7.69.1.zip
-unzip curl-7.69.1.zip
-cd curl-7.69.1/
+wget https://curl.haxx.se/download/curl-7.73.0.zip
+unzip curl-7.73.0.zip
+cd curl-7.73.0/
 mkdir build
 cd build/
 ../configure
@@ -101,9 +101,9 @@ sudo make install
 ### 2.5 wxWidgets
 The latest version compiles without problem:
 ```
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.3.tar.bz2
-tar xvf wxWidgets-3.1.3.tar.bz2
-cd wxWidgets-3.1.3/
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.3/wxWidgets-3.1.4.tar.bz2
+tar xvf wxWidgets-3.1.4.tar.bz2
+cd wxWidgets-3.1.4/
 mkdir gtk-build
 cd gtk-build/
 ../configure --disable-shared --enable-unicode
@@ -113,7 +113,7 @@ sudo make install
 
 ## 4. Tweak the code:
 
-Even with the latest dependencies, there is still some comiplation errors which needs to tweat the code to fix. 
+Even with the latest dependencies, there is still some compilation errors which needs to tweat the code to fix. 
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
@@ -141,12 +141,12 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 6. Compile
 
-Run ```make``` in folder FreeFileSync_10.25_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.3_Source/FreeFileSync/Source. 
 
-The binary should be waiting for you in FreeFileSync_10.25_Source/FreeFileSync/Build/Bin. 
+The binary should be waiting for you in FreeFileSync_11.3_Source/FreeFileSync/Build/Bin. 
 
 ## 7. zip all dependencies
-After the executable is binary, copy all dependencies libraries to the same folder as the binary, the copy `Build/Resources` folder, zip them in a file.
+After the executable binary is created, copy all dependencies libraries to the same folder as the binary, the copy `Build/Resources` folder, zip them in a file.
 
 Then end zip file should look like this:
 ```
@@ -181,29 +181,29 @@ Archive:  FreeFileSync_10.25_armv7l.zip
 Now the zip file should contain all the dependencies and the binary `Bin/FreeFileSync_armv7l` is able to run on a new raspberry pi with Raspbian OS directly.
 
 ## 8. Run FreeFileSync
-Go to FreeFileSync_10.25_Source/FreeFileSync/Build/Bin:
+Go to FreeFileSync_11.3_Source/FreeFileSync/Build/Bin:
 ```
 ./FreeFileSync_armv7l
 ```
 
 # Run FreeFileSync on another Raspberry Pi
-You don't need to build anything again. Just copy your created FreeFileSync_10.25_armv7l.zip to the other device and follow these steps:
+You don't need to build anything again. Just copy your created FreeFileSync_11.3_armv7l.zip to the other device and follow these steps:
 
-## 1. Extract the FreeFileSync_10.25_armv7l.zip you created
+## 1. Extract the FreeFileSync_11.3_armv7l.zip you created
 extract to:
 ```
-/home/pi/Desktop/FFS_10.25_ARM/
+/home/pi/Desktop/FFS_11.3_ARM/
 ```
 
 ## 2. Copy all lib* files to /usr/lib
 
 ```
-sudo cp /home/pi/Desktop/FFS_10.25_ARM/Bin/lib* /usr/lib
+sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
 
 ## 3. Run FreeFileSync
-Go to /home/pi/Desktop/FFS_10.25_ARM/Bin/
+Go to /home/pi/Desktop/FFS_11.3_ARM/Bin/
 ```
 ./FreeFileSync_armv7l
 ```
