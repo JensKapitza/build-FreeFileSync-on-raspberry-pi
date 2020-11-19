@@ -1,5 +1,5 @@
 # build-FreeFileSync-on-raspberry-pi
-FreeFileSync is a great open source file synchronization tool. However, despite it being open source, there were any obvious build instructions to find. 
+FreeFileSync is a great open source file synchronization tool but despite it being open source, there weren't any build instructions to find. 
 
 This repo records a way of building FreeFileSync on a Raspberry Pi running Raspbian (Raspberry Pi OS) Aug2020. 
 
@@ -153,10 +153,10 @@ Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
 ./FreeFileSync_armv7l
 ```
 # Run FreeFileSync on another Raspberry Pi
-You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy the executable along the libraries and other dependencies.
+You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy the various libraries and other dependencies so the executable can run.
 
-## 1. Create zip file with executable and all dependencies on host where you build FreeFileSync
-Once the executable binary has been created and verified working, copy all dependencies libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
+## 1. Create zip file with executable and all dependencies
+Once the executable binary has been created and verified working, copy all dependency libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
 
 Then end zip file should look like this:
 ```
@@ -188,7 +188,7 @@ Archive:  FreeFileSync_11.3_armv7l.zip
     55006  2020-03-18 21:57   Resources/notify.wav
 ```
 
-Now the zip file should contain all the dependencies and the binary `Bin/FreeFileSync_armv7l` is able to run on a new raspberry pi with Raspbian OS directly.
+Now the zip file should contain all the dependencies and the binary `Bin/FreeFileSync_armv7l` is able to run on a new raspberry pi assuming the target is running a current verions of Raspbian.
 
 
 ## 2. On target host, copy and extract the FreeFileSync_11.3_armv7l.zip you created
@@ -218,6 +218,6 @@ For FreeFileSync 10.25 you need gcc 10.1. gcc 9.3 will give you this error.
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
 
 ```
-sudo cp /home/pi/Desktop/FFS_10.25_ARM/Bin/lib* /usr/lib
+sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
