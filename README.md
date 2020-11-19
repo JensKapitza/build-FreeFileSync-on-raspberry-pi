@@ -1,5 +1,5 @@
 # build-FreeFileSync-on-raspberry-pi
-FreeFileSync is a great open source file synchronization tool but despite it being open source, there weren't any build instructions to find. 
+FreeFileSync is a great open source file synchronization tool but despite it being open source, build instructions were hard to find. 
 
 This repo records a way of building FreeFileSync on a Raspberry Pi running Raspbian (Raspberry Pi OS) Aug2020. 
 
@@ -57,13 +57,13 @@ Starting with FreeFileSync 10.22, the openssl version needs to be `0x1010105fL` 
    21 | static_assert(OPENSSL_VERSION_NUMBER >= 0x1010105fL, "OpenSSL version too old");
 ```
 
-It would seem openssl-1.1.1f should work, but got another error:
+It would seem openssl-1.1.1f should work, but got another compilation error:
 ```
 ../../zen/open_ssl.cpp:576:68: error: 'SSL_R_UNEXPECTED_EOF_WHILE_READING' was not declared in this scope
   576 |             if (sslError == SSL_ERROR_SSL && ERR_GET_REASON(ec) == SSL_R_UNEXPECTED_EOF_WHILE_READING) //EOF: only expected for HTTP/1.0
 ```
 
-So, used the latest openssl 3 from github:
+So, used the latest openssl 3 from github ('alpha5' as of this writing)
 ```
 git clone git://git.openssl.org/openssl.git --depth 1
 cd openssl
@@ -152,11 +152,21 @@ Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
-# Run FreeFileSync on another Raspberry Pi
+
+# {Section not verified for v11.3} Run FreeFileSync on another Raspberry Pi
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy the various libraries and other dependencies so the executable can run.
 
 ## 1. Create zip file with executable and all dependencies
 Once the executable binary has been created and verified working, copy all dependency libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
+
+The shared libraries that need to be copied are:
+- libssl.so.3
+- libstdc++.so.6
+- libcurl.so.4
+- libgcc_s.so.1
+- libcrypto.so.3
+- libssh2.so.1
+
 
 Then end zip file should look like this:
 ```
@@ -210,14 +220,27 @@ Go to /home/pi/Desktop/FFS_11.3_ARM/Bin/
 ./FreeFileSync_armv7l
 ```
 
-# Troubleshooting
+# Troubleshooting & Known Issues
+## Error due to use of gcc 9.3
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
 
-For FreeFileSync 10.25 you need gcc 10.1. gcc 9.3 will give you this error.
+For FreeFileSync 10.25 you need gcc 10.1 and using gcc 9.3 will give you this error.
 
+## Error due to missing shared libraries
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
 
 ```
 sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
+## SSL Error during startup when checking if new version is available
+When starting up, FreeFileSync checks if a newer version is available. For some reason, there's a problems with the SSL
+A popup dialog reads: "Cannot find current FreeFileSync version number online. A newer version is likely available. Check manually now?"
+and the error details is provided that reads:
+```
+Error code 167772454: error:0A000126:SSL routines::unexpected eof while reading [SSL_read_ex] SSL_ERROR_SSL
+```
+The problem doesn't seem to have any other side effects.
+
+## Other issues could very well exist
+other issues could certainly exist as use of FreeFileSync on Raspberry Pi is presumably quite small, particularly in demanding or complex use-cases.
