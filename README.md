@@ -51,13 +51,13 @@ g++ (GCC) 10.1.0
 
 ### 2.2 openssl
 
-Starting with FreeFileSYnc 10.22, the openssl version needs to be `0x1010105fL` or above, otherwise you get an error:
+Starting with FreeFileSync 10.22, the openssl version needs to be `0x1010105fL` or above, otherwise you get an error:
 ```
 ../../zen/open_ssl.cpp:21:38: error: static assertion failed: OpenSSL version too old
    21 | static_assert(OPENSSL_VERSION_NUMBER >= 0x1010105fL, "OpenSSL version too old");
 ```
 
-It would seem openssl-1.1.1f should work but got another error:
+It would seem openssl-1.1.1f should work, but got another error:
 ```
 ../../zen/open_ssl.cpp:576:68: error: 'SSL_R_UNEXPECTED_EOF_WHILE_READING' was not declared in this scope
   576 |             if (sslError == SSL_ERROR_SSL && ERR_GET_REASON(ec) == SSL_R_UNEXPECTED_EOF_WHILE_READING) //EOF: only expected for HTTP/1.0
