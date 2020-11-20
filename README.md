@@ -5,11 +5,11 @@ This repo records a way of building FreeFileSync on a Raspberry Pi running Raspb
 
 ## 0. Download and extract the source code
 
-As of writing, the latest version of FreeFileSync is 11.3 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.3 and it can be downloaded from: 
 
 https://freefilesync.org/download/FreeFileSync_11.3_Source.zip
 
-In the past, wget **DID NOT** work with this URL on the first try. so you had to either manually download it, or try wget a second time to get the source code downloaded. Seems the issue is resolved but worth noting incase you experience an issue.
+In the past, wget **DID NOT** work with this URL on the first try so you had to either manually download it, or try wget a second time to get the source code downloaded. Seems the issue is resolved but worth noting incase you experience an issue.
 
 ## 1. Install dependencies
 The following dependencies need to be installed to make code compile.
@@ -24,12 +24,12 @@ sudo apt-get install libxtst-dev
 
 ## 2. Compile dependencies
 
-The following dependencies could not be installed from `apt-get` command and has to be compiled from source code.
+The following dependencies could not be installed via `apt-get` and need to be compiled from source code.
 
 ### 2.1 gcc
 
 FreeFileSync requires a c++ compiler that supports c++2a.
-The default version of gcc with Raspbian February 2020 is 8.3.0 and does not work.
+The default version of gcc with Raspbian Aug2020 is 8.3.0 and does not work.
 
 Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 10.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default: Raspberry Pi 4).
 
@@ -145,7 +145,7 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 Run ```make``` in folder FreeFileSync_11.3_Source/FreeFileSync/Source. 
 
-Assuming the command completed without errors, the binary should be waiting for you in FreeFileSync_11.3_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.3_Source/FreeFileSync/Build/Bin. 
 
 ## 7. Run FreeFileSync
 Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
@@ -201,7 +201,7 @@ Archive:  FreeFileSync_11.3_armv7l.zip
 Now the zip file should contain all the dependencies and the binary `Bin/FreeFileSync_armv7l` is able to run on a new raspberry pi assuming the target is running a current verions of Raspbian.
 
 
-## 2. On target host, copy and extract the FreeFileSync_11.3_armv7l.zip you created
+## 2. On target host, copy and extract the zip archive you created
 extract to:
 ```
 /home/pi/Desktop/FFS_11.3_ARM/
@@ -234,7 +234,7 @@ sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
 ## SSL Error during startup when checking if new version is available
-When starting up, FreeFileSync checks if a newer version is available. For some reason, there's a problems with the SSL
+When starting up, FreeFileSync checks if a newer version is available. For some reason (perhaps related to use of openssl 3?), there's a problem with the underlying SSL session and the version information can't be retrieved.
 A popup dialog reads: "Cannot find current FreeFileSync version number online. A newer version is likely available. Check manually now?"
 and the error detail provided reads:
 ```
@@ -242,5 +242,5 @@ Error code 167772454: error:0A000126:SSL routines::unexpected eof while reading 
 ```
 The problem doesn't seem to have any other side effects.
 
-## Other issues could very well exist
-other issues could certainly exist as use of FreeFileSync on Raspberry Pi is presumably quite small, particularly in demanding or complex use-cases.
+## Other issues could exist
+Other issues could certainly exist as overall usage of FreeFileSync on Raspberry Pi is presumably small. It seems particularly possible there could be issues with the more demanding or complex use-cases.
