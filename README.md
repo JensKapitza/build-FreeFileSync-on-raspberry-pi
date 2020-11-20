@@ -63,7 +63,7 @@ It would seem openssl-1.1.1f should work, but got another compilation error:
   576 |             if (sslError == SSL_ERROR_SSL && ERR_GET_REASON(ec) == SSL_R_UNEXPECTED_EOF_WHILE_READING) //EOF: only expected for HTTP/1.0
 ```
 
-So, used the latest openssl 3 from github ('alpha5' as of this writing)
+So, used the latest openssl 3 from github ('alpha8' as of this writing)
 ```
 git clone git://git.openssl.org/openssl.git --depth 1
 cd openssl
@@ -154,7 +154,7 @@ Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 
 # {Section not verified for v11.3} Run FreeFileSync on another Raspberry Pi
-You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy the various libraries and other dependencies so the executable can run.
+You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
 
 ## 1. Create zip file with executable and all dependencies
 Once the executable binary has been created and verified working, copy all dependency libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
@@ -236,7 +236,7 @@ sudo ldconfig
 ## SSL Error during startup when checking if new version is available
 When starting up, FreeFileSync checks if a newer version is available. For some reason, there's a problems with the SSL
 A popup dialog reads: "Cannot find current FreeFileSync version number online. A newer version is likely available. Check manually now?"
-and the error details is provided that reads:
+and the error detail provided reads:
 ```
 Error code 167772454: error:0A000126:SSL routines::unexpected eof while reading [SSL_read_ex] SSL_ERROR_SSL
 ```
