@@ -134,8 +134,22 @@ With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
 Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
 With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
 ```
-
-### 4.3 [Optional] FreeFileSyc/Source/Makefile
+### 4.3 wx+\dc.h
+Change code to avoid compliation error with missed variable lines 71-73:
+before
+```
+#ifndef wxHAVE_DPI_INDEPENDENT_PIXELS
+#error why is wxHAVE_DPI_INDEPENDENT_PIXELS not defined?
+#endif
+```
+after
+```
+/* #ifndef wxHAVE_DPI_INDEPENDENT_PIXELS
+#error why is wxHAVE_DPI_INDEPENDENT_PIXELS not defined?
+#endif */
+```
+Or just delete this 3 lines
+### 4.4 [Optional] FreeFileSync/Source/Makefile
 To make the exectuable easier to run, add after line 28:
 ```
 LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
@@ -153,8 +167,9 @@ Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
 ./FreeFileSync_armv7l
 ```
 
-# {Section not verified for v11.3} Run FreeFileSync on another Raspberry Pi
+# Run FreeFileSync on another Raspberry Pi
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
+Compilation made and tested on Raspberri Pi 4 RAM 4GB with clean updated Raspberry PI OS on 22.11.2020.
 
 ## 1. Create zip file with executable and all dependencies
 Once the executable binary has been created and verified working, copy all dependency libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
