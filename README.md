@@ -3,7 +3,7 @@ FreeFileSync is a great open source file synchronization tool but despite it bei
 
 This repo records a way of building FreeFileSync on a Raspberry Pi running Raspbian (Raspberry Pi OS) Aug2020. 
 
-## 0. Download and extract the source code
+## 1. Download and extract the source code
 
 As of this writing, the latest version of FreeFileSync is 11.3 and it can be downloaded from: 
 
@@ -11,7 +11,7 @@ https://freefilesync.org/download/FreeFileSync_11.3_Source.zip
 
 In the past, wget **DID NOT** work with this URL on the first try so you had to either manually download it, or try wget a second time to get the source code downloaded. Seems the issue is resolved but worth noting incase you experience an issue.
 
-## 1. Install dependencies
+## 2. Install dependencies
 The following dependencies need to be installed to make code compile.
 - libgtk2.0-dev
 - libxtst-dev
@@ -22,11 +22,11 @@ sudo apt-get install libgtk2.0-dev
 sudo apt-get install libxtst-dev
 ```
 
-## 2. Compile dependencies
+## 3. Compile dependencies
 
 The following dependencies could not be installed via `apt-get` and need to be compiled from source code.
 
-### 2.1 gcc
+### 3.1 gcc
 
 FreeFileSync requires a c++ compiler that supports c++2a.
 The default version of gcc with Raspbian Aug2020 is 8.3.0 and does not work.
@@ -43,13 +43,14 @@ sudo bash build_gcc.sh
 If you follow the steps correctly, you should see the new verison of g++ using "g++ -v": 
 ```
 g++ --version
-
-Expected result:
-g++ (GCC) 10.1.0
-
 ```
 
-### 2.2 openssl
+Expected result:
+```
+g++ (GCC) 10.1.0
+```
+
+### 3.2 openssl
 
 Starting with FreeFileSync 10.22, the openssl version needs to be `0x1010105fL` or above, otherwise you get an error:
 ```
@@ -71,7 +72,7 @@ cd openssl
 make
 sudo make install
 ```
-### 2.3 libssh2
+### 3.3 libssh2
 The system-provided version 1.8.0-2.1 does not work with macro not found:
 ```LIBSSH2_ERROR_CHANNEL_WINDOW_FULL```
 
@@ -87,7 +88,7 @@ make
 sudo make install
 ```
 
-### 2.4 libcurl
+### 3.4 libcurl
 Could not get any package from `apt-get` working so had to build from source.
 ```
 wget https://curl.haxx.se/download/curl-7.73.0.zip
@@ -100,7 +101,7 @@ make
 sudo make install
 ```
 
-### 2.5 wxWidgets
+### 3.5 wxWidgets
 The latest version compiles without problem:
 ```
 wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.4/wxWidgets-3.1.4.tar.bz2
@@ -134,8 +135,9 @@ With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
 Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
 With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
 ```
-### 4.3 wx+\dc.h
+### 4.3 wx+/dc.h
 Change code to avoid compliation error with missed variable lines 71-73:
+
 before
 ```
 #ifndef wxHAVE_DPI_INDEPENDENT_PIXELS
@@ -155,13 +157,13 @@ To make the exectuable easier to run, add after line 28:
 LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 ```
 
-## 6. Compile
+## 5. Compile
 
 Run ```make``` in folder FreeFileSync_11.3_Source/FreeFileSync/Source. 
 
 Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.3_Source/FreeFileSync/Build/Bin. 
 
-## 7. Run FreeFileSync
+## 6. Run FreeFileSync
 Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
