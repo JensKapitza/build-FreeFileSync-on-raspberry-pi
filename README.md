@@ -5,9 +5,13 @@ This repo records a way of building FreeFileSync on a Raspberry Pi running Raspb
 
 The applicable version involved are:
 
-Rasbian (Raspberry Pi OS) release: ```August 2020```
+Item  | Release/Version
+------------ | -------------
+Rasbian (Raspberry Pi OS) | ```August 2020```
+FreeFileSync | ```v11.3```
 
-FreeFileSync version : ```v11.3```
+
+
 
 ## 1. Download and extract the source code
 
