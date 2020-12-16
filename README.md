@@ -1,21 +1,22 @@
 # build-FreeFileSync-on-raspberry-pi
-FreeFileSync is a great open source file synchronization tool but despite it being open source, build instructions were hard to find.  This repo records a way of building FreeFileSync on a Raspberry Pi
+FreeFileSync is a great open source file synchronization tool.
+Build instructions were hard to find so this repo records a way of building FreeFileSync on a Raspberry Pi.
 
 The applicable version involved are:
 
 Item  | Release/Version
 ------------ | -------------
-Rasbian (Raspberry Pi OS) | ```August 2020```
-FreeFileSync | ```v11.3```
+Rasbian (Raspberry Pi OS) | ```Dec 2020```
+FreeFileSync | ```v11.4```
 
 
 
 
 ## 1. Download and extract the source code
 
-As of this writing, the latest version of FreeFileSync is 11.3 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.4 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.3_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.4_Source.zip
 
 In the past, wget **DID NOT** work with this URL on the first try so you had to either manually download it, or try wget a second time to get the source code downloaded. Seems the issue is resolved but worth noting incase you experience an issue.
 
@@ -137,11 +138,11 @@ Add these constant definitions starting at line 58
 Change some function definitions to avoid compliation error with function not found:
 ```
 Replace: using EvpToBioFunc = int (*)(BIO* bio, EVP_PKEY* evp);
-With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
+   With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
 
 ---
 Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
-With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
+   With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
 ```
 ### 4.3 wx+/dc.h
 Change code to avoid compliation error with missed variable lines 71-73:
@@ -159,6 +160,7 @@ after
 #endif */
 ```
 Or just delete this 3 lines
+
 ### 4.4 [Optional] FreeFileSync/Source/Makefile
 To make the exectuable easier to run, add after line 28:
 ```
@@ -167,12 +169,12 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.3_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.4_Source/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.3_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.4_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.4_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
@@ -195,7 +197,7 @@ The shared libraries that need to be copied are:
 
 Then end zip file should look like this:
 ```
-Archive:  FreeFileSync_11.3_armv7l.zip
+Archive:  FreeFileSync_11.4_armv7l.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
         0  2020-04-27 22:38   Bin/
@@ -229,18 +231,18 @@ Now the zip file should contain all the dependencies and the binary `Bin/FreeFil
 ## 2. On target host, copy and extract the zip archive you created
 extract to:
 ```
-/home/pi/Desktop/FFS_11.3_ARM/
+/home/pi/Desktop/FFS_11.4_ARM/
 ```
 
 ## 3. Copy all lib* files to /usr/lib
 
 ```
-sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
+sudo cp /home/pi/Desktop/FFS_11.4_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
 
 ## 4. Run FreeFileSync
-Go to /home/pi/Desktop/FFS_11.3_ARM/Bin/
+Go to /home/pi/Desktop/FFS_11.4_ARM/Bin/
 ```
 ./FreeFileSync_armv7l
 ```
