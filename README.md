@@ -1,6 +1,6 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
-Build instructions were hard to find so this repo records a way of building FreeFileSync on a Raspberry Pi.
+The instruction to build from source were hard to find so this repo records a way of building FreeFileSync on a Raspberry Pi.
 
 The applicable version involved are:
 
@@ -9,7 +9,7 @@ Item  | Release/Version
 Rasbian (Raspberry Pi OS) | ```Dec 2020```
 FreeFileSync | ```v11.4```
 
-
+pmkees note: it appears v11.4 will build with the same libraries as v11.3 so if you were able to build it previously, no new library dependencies will need to be downloaded or installed.
 
 
 ## 1. Download and extract the source code
@@ -135,12 +135,15 @@ Add these constant definitions starting at line 58
 #define MAX_SFTP_READ_SIZE 30000
 ```
 ### 4.2 zen/open_ssl.cpp
-Change some function definitions to avoid compliation error with function not found:
+Change some function definitions to avoid compliation error with function not found.
+
+on line 182:
 ```
 Replace: using EvpToBioFunc = int (*)(BIO* bio, EVP_PKEY* evp);
    With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
-
----
+```
+on line 239:
+```
 Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
    With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
 ```
