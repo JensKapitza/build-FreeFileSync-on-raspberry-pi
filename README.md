@@ -1,23 +1,25 @@
 # build-FreeFileSync-on-raspberry-pi
-FreeFileSync is a great open source file synchronization tool but despite it being open source, build instructions were hard to find.  This repo records a way of building FreeFileSync on a Raspberry Pi
+FreeFileSync is a great open source file synchronization tool.
+The instruction to build from source were hard to find so this repo records a way of building FreeFileSync specifically on a Raspberry Pi.
 
-The applicable version involved are:
+The applicable versions involved are:
 
 Item  | Release/Version
 ------------ | -------------
-Rasbian (Raspberry Pi OS) | ```August 2020```
-FreeFileSync | ```v11.3```
+Rasbian (Raspberry Pi OS) | ```Release 3.5  Dec 2020```
+FreeFileSync | ```v11.4```
 
-
+pmkees note: it appears v11.4 will build with the same libraries as v11.3 so if you were able to build it previously, no new library versions need to be downloaded or installed.
 
 
 ## 1. Download and extract the source code
 
-As of this writing, the latest version of FreeFileSync is 11.3 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.4 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.3_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.4_Source.zip
 
-In the past, wget **DID NOT** work with this URL on the first try so you had to either manually download it, or try wget a second time to get the source code downloaded. Seems the issue is resolved but worth noting incase you experience an issue.
+For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
+
 
 ## 2. Install dependencies
 The following dependencies need to be installed to make code compile.
@@ -48,7 +50,7 @@ sudo chmod +x build_gcc.sh
 sudo bash build_gcc.sh
 ```
 
-If you follow the steps correctly, you should see the new verison of g++ using "g++ -v": 
+If you follow the steps correctly, you should see the new version: 
 ```
 g++ --version
 ```
@@ -128,20 +130,23 @@ Even with the latest dependencies, there are still some compilation errors which
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
-Add these constant definitions starting at line 58
+Add these constant definitions starting at line 25
 ```
 #define MAX_SFTP_OUTGOING_SIZE 30000
 #define MAX_SFTP_READ_SIZE 30000
 ```
 ### 4.2 zen/open_ssl.cpp
-Change some function definitions to avoid compliation error with function not found:
+Change some function definitions to avoid compliation error with function not found.
+
+on line 182:
 ```
 Replace: using EvpToBioFunc = int (*)(BIO* bio, EVP_PKEY* evp);
-With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
-
----
+   With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
+```
+on line 239:
+```
 Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
-With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
+   With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
 ```
 ### 4.3 wx+/dc.h
 Change code to avoid compliation error with missed variable lines 71-73:
@@ -159,6 +164,7 @@ after
 #endif */
 ```
 Or just delete this 3 lines
+
 ### 4.4 [Optional] FreeFileSync/Source/Makefile
 To make the exectuable easier to run, add after line 28:
 ```
@@ -167,19 +173,19 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.3_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.4_Source/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.3_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.4_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.3_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.4_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
 
 # Run FreeFileSync on another Raspberry Pi
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
-Compilation made and tested on Raspberri Pi 4 RAM 4GB with clean updated Raspberry PI OS on 22.11.2020.
+Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
 ## 1. Create zip file with executable and all dependencies
 Once the executable binary has been created and verified working, copy all dependency libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
@@ -195,7 +201,7 @@ The shared libraries that need to be copied are:
 
 Then end zip file should look like this:
 ```
-Archive:  FreeFileSync_11.3_armv7l.zip
+Archive:  FreeFileSync_11.4_armv7l.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
         0  2020-04-27 22:38   Bin/
@@ -229,18 +235,18 @@ Now the zip file should contain all the dependencies and the binary `Bin/FreeFil
 ## 2. On target host, copy and extract the zip archive you created
 extract to:
 ```
-/home/pi/Desktop/FFS_11.3_ARM/
+/home/pi/Desktop/FFS_11.4_ARM/
 ```
 
 ## 3. Copy all lib* files to /usr/lib
 
 ```
-sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
+sudo cp /home/pi/Desktop/FFS_11.4_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
 
 ## 4. Run FreeFileSync
-Go to /home/pi/Desktop/FFS_11.3_ARM/Bin/
+Go to /home/pi/Desktop/FFS_11.4_ARM/Bin/
 ```
 ./FreeFileSync_armv7l
 ```
