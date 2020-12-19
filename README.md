@@ -1,15 +1,15 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
-The instruction to build from source were hard to find so this repo records a way of building FreeFileSync on a Raspberry Pi.
+The instruction to build from source were hard to find so this repo records a way of building FreeFileSync specifically on a Raspberry Pi.
 
-The applicable version involved are:
+The applicable versions involved are:
 
 Item  | Release/Version
 ------------ | -------------
-Rasbian (Raspberry Pi OS) | ```Dec 2020```
+Rasbian (Raspberry Pi OS) | ```Release 3.5  Dec 2020```
 FreeFileSync | ```v11.4```
 
-pmkees note: it appears v11.4 will build with the same libraries as v11.3 so if you were able to build it previously, no new library dependencies will need to be downloaded or installed.
+pmkees note: it appears v11.4 will build with the same libraries as v11.3 so if you were able to build it previously, no new library versions need to be downloaded or installed.
 
 
 ## 1. Download and extract the source code
@@ -18,7 +18,8 @@ As of this writing, the latest version of FreeFileSync is 11.4 and it can be dow
 
 https://freefilesync.org/download/FreeFileSync_11.4_Source.zip
 
-In the past, wget **DID NOT** work with this URL on the first try so you had to either manually download it, or try wget a second time to get the source code downloaded. Seems the issue is resolved but worth noting incase you experience an issue.
+For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
+
 
 ## 2. Install dependencies
 The following dependencies need to be installed to make code compile.
@@ -49,7 +50,7 @@ sudo chmod +x build_gcc.sh
 sudo bash build_gcc.sh
 ```
 
-If you follow the steps correctly, you should see the new verison of g++ using "g++ -v": 
+If you follow the steps correctly, you should see the new version: 
 ```
 g++ --version
 ```
@@ -129,7 +130,7 @@ Even with the latest dependencies, there are still some compilation errors which
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
-Add these constant definitions starting at line 58
+Add these constant definitions starting at line 25
 ```
 #define MAX_SFTP_OUTGOING_SIZE 30000
 #define MAX_SFTP_READ_SIZE 30000
@@ -184,7 +185,7 @@ Go to the FreeFileSync_11.4_Source/FreeFileSync/Build/Bin directory and enter:
 
 # Run FreeFileSync on another Raspberry Pi
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
-Compilation made and tested on Raspberri Pi 4 RAM 4GB with clean updated Raspberry PI OS on 22.11.2020.
+Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
 ## 1. Create zip file with executable and all dependencies
 Once the executable binary has been created and verified working, copy all dependency libraries to the same folder as the binary, then copy the `Build/Resources` folder, then zip them all up in a file.
