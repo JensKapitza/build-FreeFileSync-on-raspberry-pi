@@ -6,29 +6,26 @@ The applicable versions involved are:
 
 Item  | Release/Version
 ------------ | -------------
-Rasbian (Raspberry Pi OS) | ```Release 3.5  Dec 2020```
-FreeFileSync | ```v11.4```
-
-pmkees note: it appears v11.4 will build with the same libraries as v11.3 so if you were able to build it previously, no new library versions need to be downloaded or installed.
-
+Rasbian (Raspberry Pi OS) | ```Release 3.6  Jan 2021```
+FreeFileSync | ```v11.13```
 
 ## 1. Download and extract the source code
 
-As of this writing, the latest version of FreeFileSync is 11.4 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.13 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.4_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.13_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
 
 ## 2. Install dependencies
 The following dependencies need to be installed to make code compile.
-- libgtk2.0-dev
+- libgtk3-dev
 - libxtst-dev
 
 ```
 sudo apt-get update
-sudo apt-get install libgtk2.0-dev
+sudo apt-get install libgtk3-dev
 sudo apt-get install libxtst-dev
 ```
 
@@ -39,9 +36,9 @@ The following dependencies could not be installed via `apt-get` and need to be c
 ### 3.1 gcc
 
 FreeFileSync requires a c++ compiler that supports c++2a.
-The default version of gcc with Raspbian Aug2020 is 8.3.0 and does not work.
+The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not work.
 
-Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 10.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default: Raspberry Pi 4).
+Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
 Note the build needs about 8 GB of free disk space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
 
@@ -57,7 +54,7 @@ g++ --version
 
 Expected result:
 ```
-g++ (GCC) 10.1.0
+g++ (GCC) 11.2.0
 ```
 
 ### 3.2 openssl
@@ -74,10 +71,13 @@ It would seem openssl-1.1.1f should work, but got another compilation error:
   576 |             if (sslError == SSL_ERROR_SSL && ERR_GET_REASON(ec) == SSL_R_UNEXPECTED_EOF_WHILE_READING) //EOF: only expected for HTTP/1.0
 ```
 
-So, used the latest openssl 3 from github ('alpha8' as of this writing)
+So, used the latest openssl-1.1.1 ('l' as of this writing)
 ```
-git clone git://git.openssl.org/openssl.git --depth 1
-cd openssl
+wget https://www.openssl.org/source/openssl-1.1.1l.tar.gz
+tar xvf openssl-1.1.1l.tar.gz
+cd openssl-1.1.1l
+mkdir build
+cd build
 ./config
 make
 sudo make install
@@ -88,9 +88,9 @@ The system-provided version 1.8.0-2.1 does not work with macro not found:
 
 Had to build from source:
 ```
-wget https://www.libssh2.org/download/libssh2-1.9.0.tar.gz
+wget https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
 tar xvf libssh2-1.9.0.tar.gz
-cd libssh2-1.9.0/
+cd libssh2-1.10.0/
 mkdir build
 cd build/
 ../configure
@@ -101,9 +101,9 @@ sudo make install
 ### 3.4 libcurl
 Could not get any package from `apt-get` working so had to build from source.
 ```
-wget https://curl.haxx.se/download/curl-7.73.0.zip
-unzip curl-7.73.0.zip
-cd curl-7.73.0/
+wget https://curl.haxx.se/download/curl-7.78.0.zip
+unzip curl-7.78.0.zip
+cd curl-7.78.0/
 mkdir build
 cd build/
 ../configure
@@ -114,9 +114,9 @@ sudo make install
 ### 3.5 wxWidgets
 The latest version compiles without problem:
 ```
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.4/wxWidgets-3.1.4.tar.bz2
-tar xvf wxWidgets-3.1.4.tar.bz2
-cd wxWidgets-3.1.4/
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
+tar xvf wxWidgets-3.1.5.tar.bz2
+cd wxWidgets-3.1.5/
 mkdir gtk-build
 cd gtk-build/
 ../configure --disable-shared --enable-unicode
@@ -173,12 +173,12 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.4_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.13_Source/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.4_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.13_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.4_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.13_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
