@@ -254,7 +254,7 @@ Go to /home/pi/Desktop/FFS_11.4_ARM/Bin/
 # Troubleshooting & Known Issues
 ## Error due to use of gcc 9.3
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
-
+ 
 For FreeFileSync 10.25 you need gcc 10.1 and using gcc 9.3 will give you this error.
 
 ## Error due to missing shared libraries
