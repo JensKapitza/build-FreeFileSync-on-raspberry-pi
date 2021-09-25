@@ -1,6 +1,6 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
-The instruction to build from source were hard to find so this repo records a way of building FreeFileSync specifically on a Raspberry Pi.
+The instruction to build from source were hard to find so this repo records a way of building FreeFileSync specifically on a Raspberry Pi running an up-to-date Raspbian
 
 The applicable versions involved are:
 
@@ -19,7 +19,7 @@ For some reason, wget **DID NOT** successfuly download the file on the first try
 
 
 ## 2. Install dependencies
-The following dependencies need to be installed to make code compile.
+The following dependencies need to be installed to make the code compile.
 - libgtk3-dev
 - libxtst-dev
 
@@ -35,8 +35,8 @@ The following dependencies could not be installed via `apt-get` and need to be c
 
 ### 3.1 gcc
 
-FreeFileSync requires a c++ compiler that supports c++2a.
-The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not work.
+FreeFileSync requires a c++ compiler that supports the c++20 standard.
+The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not have all the necessary support.
 
 Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
