@@ -20,7 +20,7 @@ For some reason, wget **DID NOT** successfuly download the file on the first try
 
 ## 2. Install dependencies
 The following dependencies need to be installed to make the code compile.
-- libgtk3-dev
+- libgtk-3-dev
 - libxtst-dev
 
 ```
@@ -126,37 +126,19 @@ Add these constant definitions starting at line 25
 #define MAX_SFTP_OUTGOING_SIZE 30000
 #define MAX_SFTP_READ_SIZE 30000
 ```
-### 4.2 zen/open_ssl.cpp
-Change some function definitions to avoid compliation error with function not found.
 
-on line 182:
-```
-Replace: using EvpToBioFunc = int (*)(BIO* bio, EVP_PKEY* evp);
-   With: using EvpToBioFunc = int (*)(BIO* bio, const EVP_PKEY* evp);
-```
-on line 239:
-```
-Replace: int PEM_write_bio_PrivateKey2(BIO* bio, EVP_PKEY* key)
-   With: int PEM_write_bio_PrivateKey2(BIO* bio, const EVP_PKEY* key)
-```
-### 4.3 wx+/dc.h
-Change code to avoid compliation error with missed variable lines 71-73:
-
-before
-```
-#ifndef wxHAVE_DPI_INDEPENDENT_PIXELS
-#error why is wxHAVE_DPI_INDEPENDENT_PIXELS not defined?
-#endif
-```
-after
-```
-/* #ifndef wxHAVE_DPI_INDEPENDENT_PIXELS
-#error why is wxHAVE_DPI_INDEPENDENT_PIXELS not defined?
-#endif */
-```
-Or just delete this 3 lines
 
 ### 4.4 [Optional] FreeFileSync/Source/Makefile
+
+On lines 19 and 21
+```
+cxxFlags  += `pkg-config --cflags gtk+-3.0`
+```
+to
+```
+cxxFlags  += `pkg-config --cflags gtk+-2.0`
+```
+
 To make the exectuable easier to run, add after line 28:
 ```
 LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
@@ -166,17 +148,17 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.13_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.14_Source/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.13_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.14_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.13_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.14_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
 
-# Run FreeFileSync on another Raspberry Pi
+# Running FreeFileSync on another Raspberry Pi
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
 Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
