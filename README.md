@@ -1,15 +1,16 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
-The instruction to build from source were hard to find so this repo records a way of building FreeFileSync specifically on a Raspberry Pi running an up-to-date Raspbian
+Building from source on linux is simple *if* all the necessary dependencies are installed.
+These instruction capture the necessary steps for installing the necessary dependencies for Raspbian (RaspberryPi OS) and compilation of FreeFileSync
 
-The applicable versions involved are:
+This version of instruction apply to the following:
 
 Item  | Release/Version
 ------------ | -------------
 Rasbian (Raspberry Pi OS) | ```Release 3.6  Jan 2021```
 FreeFileSync | ```v11.14```
 
-## 1. Download and extract the source code
+## 1. Download and extract the FreeFilesSync source code
 
 As of this writing, the latest version of FreeFileSync is 11.14 and it can be downloaded from: 
 
@@ -17,8 +18,13 @@ https://freefilesync.org/download/FreeFileSync_11.14_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
+Move the .zip file to the desired directory and uncompress
+```unzip FreeFileSync_11.14_Source.zip```
 
-## 2. Install dependencies
+## 2. Install available dependencies via apt-get
+These instructions reflect building FreeFileSync using libgtk-3. This may lead to a non-optimal user experience- see:
+https://freefilesync.org/forum/viewtopic.php?t=7660#p26057
+
 The following dependencies need to be installed to make the code compile.
 - libgtk-3-dev
 - libxtst-dev
@@ -38,7 +44,7 @@ The following dependencies could not be installed via `apt-get` and need to be c
 FreeFileSync requires a c++ compiler that supports the c++20 standard.
 The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not have all the necessary support.
 
-Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. But first change the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
+Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
 Note the build needs about 8 GB of free disk space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
 
@@ -59,8 +65,7 @@ g++ (GCC) 11.2.0
 
 ### 3.2 openssl
 
-Starting with FreeFileSync 11.14, the version of openssl needs to be openssl 3.0
-
+Starting with FreeFileSync 11.14, use of openssl 3.0 is supported. 
 ```
 wget https://www.openssl.org/source/openssl-3.0.0.tar.gz
 tar xvf openssl-3.0.0.tar.gz
@@ -70,8 +75,8 @@ cd build
 ../config
 make
 sudo make install
-```
 export LD_LIBRARY_PATH=/usr/local/lib
+```
 
 ### 3.3 libssh2
 The system-provided version 1.8.0-2.1 does not work with macro not found:
@@ -90,10 +95,10 @@ sudo make install
 ```
 
 ### 3.4 libcurl
-Could not get any package from `apt-get` working so had to build from source.
+Could not get any package from `apt-get` working so had to build curl and libcurl from source.
 ```
 wget https://curl.haxx.se/download/curl-7.79.1.tar.gz
-tar xvf curl-7.78.0.tar.gz
+tar xvf curl-7.79.1.tar.gz
 cd curl-7.79.1/
 mkdir build
 cd build/
@@ -115,9 +120,9 @@ make
 sudo make install
 ```
 
-## 4. Tweak the code
+## 4. Tweak FreeFileSync code
 
-Even with the latest dependencies, there are still some compilation errors which are fixed with some code tweaks.
+Even with the latest dependencies, some code tweaks are needed.
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
@@ -127,24 +132,28 @@ Add these constant definitions starting at line 25
 #define MAX_SFTP_READ_SIZE 30000
 ```
 
+### 4.2 Update makefile to use GTK3 instead of GTK2 
+As mentioned previously, use of GTK3 can result in poor UI exprience, see thread at:
+https://freefilesync.org/forum/viewtopic.php?t=7660
 
-### 4.4 [Optional] FreeFileSync/Source/Makefile
+On line 19:
+```
+change: cxxFlags  += `pkg-config --cflags gtk+-2.0`
+to:     cxxFlags  += `pkg-config --cflags gtk+-3.0`
+```
 
-On lines 19 and 21
+On line 21:
 ```
-cxxFlags  += `pkg-config --cflags gtk+-3.0`
+change: cxxFlags  += -isystem/usr/include/gtk-2.0
+to:     cxxFlags  += -isystem/usr/include/gtk-3.0
 ```
-to
-```
-cxxFlags  += `pkg-config --cflags gtk+-2.0`
-```
+
+### 4.3 [Optional] FreeFileSync/Source/Makefile
 
 To make the exectuable easier to run, add after line 28:
 ```
 LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 ```
-
-{change referenced in makefile to GTK3, didn't mess with the DPI changes or SSL changes}
 
 ## 5. Compile
 
@@ -158,7 +167,7 @@ Go to the FreeFileSync_11.14_Source/FreeFileSync/Build/Bin directory and enter:
 ./FreeFileSync_armv7l
 ```
 
-# Running FreeFileSync on another Raspberry Pi
+# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.14}
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
 Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
@@ -227,6 +236,14 @@ Go to /home/pi/Desktop/FFS_11.4_ARM/Bin/
 ```
 
 # Troubleshooting & Known Issues
+
+## Can't add Google Drive Connection
+When attempting to add a Google Drive Connection, a tab in the chromium browser opens with an authentication error:
+```
+Error 400: invalid_request
+Missing required parameter: client_id
+```
+
 ## Error due to use of gcc 9.3
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
  
@@ -239,14 +256,6 @@ For FreeFileSync 10.25 you need gcc 10.1 and using gcc 9.3 will give you this er
 sudo cp /home/pi/Desktop/FFS_11.3_ARM/Bin/lib* /usr/lib
 sudo ldconfig
 ```
-## SSL Error during startup when checking if new version is available
-When starting up, FreeFileSync checks if a newer version is available. For some reason (perhaps related to use of openssl 3?), there's a problem with the underlying SSL session and the version information can't be retrieved.
-A popup dialog reads: "Cannot find current FreeFileSync version number online. A newer version is likely available. Check manually now?"
-and the error detail provided reads:
-```
-Error code 167772454: error:0A000126:SSL routines::unexpected eof while reading [SSL_read_ex] SSL_ERROR_SSL
-```
-The problem doesn't seem to have any other side effects.
 
 ## Other issues could exist
 Other issues could certainly exist as overall usage of FreeFileSync on Raspberry Pi is presumably small. It seems particularly possible there could be issues with the more demanding or complex use-cases.
