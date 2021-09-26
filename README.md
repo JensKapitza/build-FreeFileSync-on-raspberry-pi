@@ -7,13 +7,13 @@ The applicable versions involved are:
 Item  | Release/Version
 ------------ | -------------
 Rasbian (Raspberry Pi OS) | ```Release 3.6  Jan 2021```
-FreeFileSync | ```v11.13```
+FreeFileSync | ```v11.14```
 
 ## 1. Download and extract the source code
 
-As of this writing, the latest version of FreeFileSync is 11.13 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.14 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.13_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.14_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
@@ -25,7 +25,7 @@ The following dependencies need to be installed to make the code compile.
 
 ```
 sudo apt-get update
-sudo apt-get install libgtk3-dev
+sudo apt-get install libgtk-3-dev
 sudo apt-get install libxtst-dev
 ```
 
@@ -59,29 +59,20 @@ g++ (GCC) 11.2.0
 
 ### 3.2 openssl
 
-Starting with FreeFileSync 10.22, the openssl version needs to be `0x1010105fL` or above, otherwise you get an error:
-```
-../../zen/open_ssl.cpp:21:38: error: static assertion failed: OpenSSL version too old
-   21 | static_assert(OPENSSL_VERSION_NUMBER >= 0x1010105fL, "OpenSSL version too old");
-```
+Starting with FreeFileSync 11.14, the version of openssl needs to be openssl 3.0
 
-It would seem openssl-1.1.1f should work, but got another compilation error:
 ```
-../../zen/open_ssl.cpp:576:68: error: 'SSL_R_UNEXPECTED_EOF_WHILE_READING' was not declared in this scope
-  576 |             if (sslError == SSL_ERROR_SSL && ERR_GET_REASON(ec) == SSL_R_UNEXPECTED_EOF_WHILE_READING) //EOF: only expected for HTTP/1.0
-```
-
-So, used the latest openssl-1.1.1 ('l' as of this writing)
-```
-wget https://www.openssl.org/source/openssl-1.1.1l.tar.gz
-tar xvf openssl-1.1.1l.tar.gz
-cd openssl-1.1.1l
+wget https://www.openssl.org/source/openssl-3.0.0.tar.gz
+tar xvf openssl-3.0.0.tar.gz
+cd openssl-3.0.0
 mkdir build
 cd build
-./config
+../config
 make
 sudo make install
 ```
+export LD_LIBRARY_PATH=/usr/local/lib
+
 ### 3.3 libssh2
 The system-provided version 1.8.0-2.1 does not work with macro not found:
 ```LIBSSH2_ERROR_CHANNEL_WINDOW_FULL```
@@ -89,7 +80,7 @@ The system-provided version 1.8.0-2.1 does not work with macro not found:
 Had to build from source:
 ```
 wget https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
-tar xvf libssh2-1.9.0.tar.gz
+tar xvf libssh2-1.10.0.tar.gz
 cd libssh2-1.10.0/
 mkdir build
 cd build/
@@ -101,12 +92,12 @@ sudo make install
 ### 3.4 libcurl
 Could not get any package from `apt-get` working so had to build from source.
 ```
-wget https://curl.haxx.se/download/curl-7.78.0.zip
-unzip curl-7.78.0.zip
-cd curl-7.78.0/
+wget https://curl.haxx.se/download/curl-7.79.1.tar.gz
+tar xvf curl-7.78.0.tar.gz
+cd curl-7.79.1/
 mkdir build
 cd build/
-../configure
+../configure --with-openssl
 make
 sudo make install
 ```
@@ -114,7 +105,7 @@ sudo make install
 ### 3.5 wxWidgets
 The latest version compiles without problem:
 ```
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz
 tar xvf wxWidgets-3.1.5.tar.bz2
 cd wxWidgets-3.1.5/
 mkdir gtk-build
@@ -170,6 +161,8 @@ To make the exectuable easier to run, add after line 28:
 ```
 LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 ```
+
+{change referenced in makefile to GTK3, didn't mess with the DPI changes or SSL changes}
 
 ## 5. Compile
 
