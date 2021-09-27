@@ -239,10 +239,9 @@ Go to /home/pi/Desktop/FFS_11.4_ARM/Bin/
 
 ## Can't add Google Drive Connection
 When attempting to add a Google Drive Connection, a tab in the chromium browser opens with an authentication error:
-```
-Error 400: invalid_request
-Missing required parameter: client_id
-```
+> Error 400: invalid_request
+> 
+> Missing required parameter: client_id
 
 ## Error due to use of gcc 9.3
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
