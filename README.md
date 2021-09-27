@@ -133,7 +133,7 @@ Add these constant definitions starting at line 25
 ```
 
 ### 4.2 Update makefile to use GTK3 instead of GTK2 
-As mentioned previously, use of GTK3 can result in poor UI exprience, see thread at:
+As mentioned previously, use of GTK3 can result in poor UI experience, see thread at:
 https://freefilesync.org/forum/viewtopic.php?t=7660
 
 On line 19:
@@ -247,7 +247,8 @@ Missing required parameter: client_id
 ## Error due to use of gcc 9.3
 > *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
  
-For FreeFileSync 10.25 you need gcc 10.1 and using gcc 9.3 will give you this error.
+For FreeFileSync 10.25 and later, you need gcc 10.1 and using gcc 9.3 will give you the above erro
+  
 
 ## Error due to missing shared libraries
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
@@ -258,4 +259,4 @@ sudo ldconfig
 ```
 
 ## Other issues could exist
-Other issues could certainly exist as overall usage of FreeFileSync on Raspberry Pi is presumably small. It seems particularly possible there could be issues with the more demanding or complex use-cases.
+Other issues could certainly exist as overall usage of FreeFileSync on Raspberry Pi is presumably small. It seems likely there could be issues with the more demanding or complex use-cases.
