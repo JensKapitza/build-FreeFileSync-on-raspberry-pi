@@ -1,7 +1,7 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
 Building from source on linux is simple *if* all the necessary dependencies are installed.
-These instruction capture the necessary steps for installing the necessary dependencies for Raspbian (RaspberryPi OS) and compilation of FreeFileSync
+These instruction capture the necessary steps for installing the necessary dependencies for Raspbian (Raspberry Pi OS) and compilation of FreeFileSync
 
 This version of instruction apply to the following:
 
@@ -41,10 +41,10 @@ The following dependencies could not be installed via `apt-get` and need to be c
 
 ### 3.1 gcc
 
-FreeFileSync requires a c++ compiler that supports the c++20 standard.
+FreeFileSync requires a C++ compiler that supports the C++20 standard.
 The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not have all the necessary support.
 
-Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only c/c++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
+Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only C/C++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
 Note the build needs about 8 GB of free disk space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
 
@@ -65,7 +65,7 @@ g++ (GCC) 11.2.0
 
 ### 3.2 openssl
 
-Starting with FreeFileSync 11.14, use of openssl 3.0 is supported. 
+Starting with FreeFileSync 11.14, use of Openssl 3.0 is supported so build OpenSSL 3.0 and make it available to use.
 ```
 wget https://www.openssl.org/source/openssl-3.0.0.tar.gz
 tar xvf openssl-3.0.0.tar.gz
@@ -79,7 +79,7 @@ export LD_LIBRARY_PATH=/usr/local/lib
 ```
 
 ### 3.3 libssh2
-The system-provided version 1.8.0-2.1 does not work with macro not found:
+The system-provided version of libssh2 1.8.0-2.1 does not work with a macro not found compilation error:
 ```LIBSSH2_ERROR_CHANNEL_WINDOW_FULL```
 
 Had to build from source:
