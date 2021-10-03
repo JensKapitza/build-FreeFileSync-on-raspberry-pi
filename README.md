@@ -35,9 +35,9 @@ sudo apt-get install libgtk-3-dev
 sudo apt-get install libxtst-dev
 ```
 
-## 3. Compile dependencies
+## 3. Compile dependencies not available via apt-get
 
-The following dependencies could not be installed via `apt-get` and need to be compiled from source code.
+The following dependencies could not be installed via `apt-get` and need to be compiled from their source code.
 
 ### 3.1 gcc
 
