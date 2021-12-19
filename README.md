@@ -1,25 +1,25 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
-Building from source on linux is simple *if* all the necessary dependencies are installed.
-These instruction capture the necessary steps for installing the necessary dependencies for Raspbian (Raspberry Pi OS) and compilation of FreeFileSync
+Building from source on linux is straightfoward *if* all the necessary dependencies are installed.
+These instruction capture the necessary steps for installing the necessary dependencies and compiling FreeFileSync on Raspberry Pi OS (Raspbian)
 
 This version of instruction apply to the following:
 
 Item  | Release/Version
 ------------ | -------------
-Rasbian (Raspberry Pi OS) | ```Release 3.6  Jan 2021```
-FreeFileSync | ```v11.14```
+Raspberry Pi OS (Raspbian) | ```Release 4.0  Nov 2021```
+FreeFileSync | ```v11.15``
 
 ## 1. Download and extract the FreeFilesSync source code
 
-As of this writing, the latest version of FreeFileSync is 11.14 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.15 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.14_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.15_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
 Move the .zip file to the desired directory and uncompress
-```unzip FreeFileSync_11.14_Source.zip```
+```unzip FreeFileSync_11.15_Source.zip```
 
 ## 2. Install available dependencies via apt-get
 These instructions reflect building FreeFileSync using libgtk-3. This may lead to a non-optimal user experience- see:
@@ -31,8 +31,9 @@ The following dependencies need to be installed to make the code compile.
 
 ```
 sudo apt-get update
-sudo apt-get install libgtk-3-dev
+sudo apt-get install libgtk-3-dev 
 sudo apt-get install libxtst-dev
+sudo apt-get install libssh2-1-dev
 ```
 
 ## 3. Compile dependencies not available via apt-get
@@ -63,6 +64,12 @@ Expected result:
 g++ (GCC) 11.2.0
 ```
 
+To ensure FreeFileSync can find the necessary libraries during runtime, copy the newly created libstdc++ lib to a standard Raspberry Pi OS location 
+```
+sudo cp /usr/local/lib/libstdc++.so.6.0.29 /lib/arm-linux-gnueabihf/
+sudo ldconfig
+```
+
 ### 3.2 openssl
 
 Starting with FreeFileSync 11.14, use of Openssl 3.0 is supported so build OpenSSL 3.0 and make it available to use.
@@ -75,42 +82,27 @@ cd build
 ../config
 make
 sudo make install
-export LD_LIBRARY_PATH=/usr/local/lib
+sudo ldconfig
 ```
 
-### 3.3 libssh2
-The system-provided version of libssh2 1.8.0-2.1 does not work with a macro not found compilation error:
-```LIBSSH2_ERROR_CHANNEL_WINDOW_FULL```
-
-Had to build from source:
+### 3.3 libcurl
+Could not get any package from `apt-get` to work, so had to build curl and libcurl from source.
 ```
-wget https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
-tar xvf libssh2-1.10.0.tar.gz
-cd libssh2-1.10.0/
+wget https://curl.haxx.se/download/curl-7.80.0.tar.gz
+tar xvf curl-7.80.0.tar.gz
+cd curl-7.80.0/
 mkdir build
 cd build/
-../configure
+../configure --with-openssl --with-libssh2 --enable-versioned-symbols
 make
 sudo make install
 ```
 
-### 3.4 libcurl
-Could not get any package from `apt-get` working so had to build curl and libcurl from source.
+### 3.4 wxWidgets
+FreeFilesync needs a 3.1.x version of wxWidgets.
+The latest wxWidgets 3.1 version compiles without problem:
 ```
-wget https://curl.haxx.se/download/curl-7.79.1.tar.gz
-tar xvf curl-7.79.1.tar.gz
-cd curl-7.79.1/
-mkdir build
-cd build/
-../configure --with-openssl
-make
-sudo make install
-```
-
-### 3.5 wxWidgets
-The latest version compiles without problem:
-```
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
 tar xvf wxWidgets-3.1.5.tar.bz2
 cd wxWidgets-3.1.5/
 mkdir gtk-build
@@ -157,17 +149,17 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.14_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.15_Source/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.14_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.15_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.14_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.15_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
 
-# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.14}
+# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.15}
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
 Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
@@ -242,12 +234,6 @@ When attempting to add a Google Drive Connection, a tab in the chromium browser 
 > Error 400: invalid_request
 > 
 > Missing required parameter: client_id
-
-## Error due to use of gcc 9.3
-> *../../zen/legacy_compiler.h:10:14: fatal error: numbers: No such file or directory 10 | #include <numbers> //C++20*
- 
-For FreeFileSync 10.25 and later, you need gcc 10.1 and using gcc 9.3 will give you the above erro
-  
 
 ## Error due to missing shared libraries
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
