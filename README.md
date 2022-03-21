@@ -14,7 +14,7 @@ FreeFileSync | ```v11.18```
 
 As of this writing, the latest version of FreeFileSync is 11.18 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.15_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.18_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
