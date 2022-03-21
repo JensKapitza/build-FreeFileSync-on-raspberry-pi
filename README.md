@@ -8,7 +8,7 @@ This version of instruction apply to the following:
 Item  | Release/Version
 ------------ | -------------
 Raspberry Pi OS (Raspbian) | ```Release 4.0  Nov 2021```
-FreeFileSync | ```v11.15```
+FreeFileSync | ```v11.18```
 
 ## 1. Download and extract the FreeFilesSync source code
 
@@ -87,7 +87,7 @@ sudo ldconfig
 ```
 
 ### 3.3 libcurl
-Used the latest version of libcurl (7.82.0)
+Used the latest version of libcul available at the time (7.82.0)
 ```
 wget https://curl.se/download/curl-7.82.0.tar.gz
 tar xvf curl-7.82.0.tar.gz
