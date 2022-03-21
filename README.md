@@ -8,18 +8,18 @@ This version of instruction apply to the following:
 Item  | Release/Version
 ------------ | -------------
 Raspberry Pi OS (Raspbian) | ```Release 4.0  Nov 2021```
-FreeFileSync | ```v11.15``
+FreeFileSync | ```v11.15```
 
 ## 1. Download and extract the FreeFilesSync source code
 
-As of this writing, the latest version of FreeFileSync is 11.15 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.18 and it can be downloaded from: 
 
 https://freefilesync.org/download/FreeFileSync_11.15_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
 Move the .zip file to the desired directory and uncompress
-```unzip FreeFileSync_11.15_Source.zip```
+```unzip FreeFileSync_11.18_Source.zip```
 
 ## 2. Install available dependencies via apt-get
 These instructions reflect building FreeFileSync using libgtk-3. This may lead to a non-optimal user experience- see:
@@ -28,6 +28,7 @@ https://freefilesync.org/forum/viewtopic.php?t=7660#p26057
 The following dependencies need to be installed to make the code compile.
 - libgtk-3-dev
 - libxtst-dev
+- libssh2-1-dev
 
 ```
 sudo apt-get update
@@ -86,11 +87,11 @@ sudo ldconfig
 ```
 
 ### 3.3 libcurl
-Could not get any package from `apt-get` to work, so had to build curl and libcurl from source.
+Used the latest version of libcurl (7.82.0)
 ```
-wget https://curl.haxx.se/download/curl-7.80.0.tar.gz
-tar xvf curl-7.80.0.tar.gz
-cd curl-7.80.0/
+wget https://curl.se/download/curl-7.82.0.tar.gz
+tar xvf curl-7.82.0.tar.gz
+cd curl-7.82.0/
 mkdir build
 cd build/
 ../configure --with-openssl --with-libssh2 --enable-versioned-symbols
@@ -99,8 +100,8 @@ sudo make install
 ```
 
 ### 3.4 wxWidgets
-FreeFilesync needs a 3.1.x version of wxWidgets.
-The latest wxWidgets 3.1 version compiles without problem:
+FreeFilesync needs the 3.1.5 version of wxWidgets.
+Luckily the latest wxWidgets 3.1.5 version compiles without problem:
 ```
 wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
 tar xvf wxWidgets-3.1.5.tar.bz2
@@ -124,7 +125,7 @@ Add these constant definitions starting at line 25
 #define MAX_SFTP_READ_SIZE 30000
 ```
 
-### 4.2 Update makefile to use GTK3 instead of GTK2 
+### 4.2 Update FreeFileSync/Source/Makefile to use GTK3 instead of GTK2 
 As mentioned previously, use of GTK3 can result in poor UI experience, see thread at:
 https://freefilesync.org/forum/viewtopic.php?t=7660
 
@@ -149,17 +150,17 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.15_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.18_Source/FreeFileSync/Source. 
 
 Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.15_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.15_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.18_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
 
-# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.15}
+# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.18}
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
 Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
