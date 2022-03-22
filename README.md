@@ -41,7 +41,7 @@ sudo apt-get install libssh2-1-dev
 
 The following dependencies could not be installed via `apt-get` and need to be compiled from their source code.
 
-### 3.1 gcc
+### 3.1 gcc w/ good C++20 support
 
 FreeFileSync requires a C++ compiler that supports the C++20 standard.
 The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not have all the necessary support.
@@ -87,7 +87,7 @@ sudo ldconfig
 ```
 
 ### 3.3 libcurl
-Used the latest version of libcul available at the time (7.82.0)
+Installed the latest version of curl available at the time (7.82.0)- for 11.18 noticed that curl 7.80.0 didn't work
 ```
 wget https://curl.se/download/curl-7.82.0.tar.gz
 tar xvf curl-7.82.0.tar.gz
@@ -126,8 +126,7 @@ Add these constant definitions starting at line 25
 ```
 
 ### 4.2 Update FreeFileSync/Source/Makefile to use GTK3 instead of GTK2 
-As mentioned previously, use of GTK3 can result in poor UI experience, see thread at:
-https://freefilesync.org/forum/viewtopic.php?t=7660
+Although as mentioned previously, use of GTK3 can result in poor UI experience (see thread at: https://freefilesync.org/forum/viewtopic.php?t=7660) the various dependencies for GTK2 building became too arduous for Raspbery Pi OS and so, picking my poison, I switched to GTK3.
 
 On line 19:
 ```
@@ -152,7 +151,7 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 Run ```make``` in folder FreeFileSync_11.18_Source/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.15_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.18_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
 Go to the FreeFileSync_11.18_Source/FreeFileSync/Build/Bin directory and enter:
