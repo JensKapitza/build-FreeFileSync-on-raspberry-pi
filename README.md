@@ -12,14 +12,14 @@ FreeFileSync | ```v11.20```
 
 ## 1. Download and extract the FreeFilesSync source code
 
-As of this writing, the latest version of FreeFileSync is 11.18 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.20 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.18_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.20_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
 Move the .zip file to the desired directory and uncompress
-```unzip FreeFileSync_11.18_Source.zip```
+```unzip FreeFileSync_11.20_Source.zip```
 
 ## 2. Install available dependencies via apt-get
 These instructions reflect building FreeFileSync using libgtk-3. This may lead to a non-optimal user experience- see:
@@ -73,7 +73,7 @@ sudo ldconfig
 
 ### 3.2 openssl
 
-Starting with FreeFileSync 11.14, use of Openssl 3.0 is supported so build OpenSSL 3.0 and make it available to use.
+Starting with FreeFileSync 11.14, use of openssl 3.0 is supported so build OpenSSL 3.0 and make it available to use.
 ```
 wget https://www.openssl.org/source/openssl-3.0.0.tar.gz
 tar xvf openssl-3.0.0.tar.gz
@@ -100,12 +100,12 @@ sudo make install
 ```
 
 ### 3.4 wxWidgets
-FreeFilesync needs the 3.1.5 version of wxWidgets.
-Luckily the latest wxWidgets 3.1.5 version compiles without problem:
+Starting with FreeFileSync v11.20, the minimum version of WxWidgets is 3.1.6.
+Luckily wxWidgets 3.1.6 version compiles without problem:
 ```
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
-tar xvf wxWidgets-3.1.5.tar.bz2
-cd wxWidgets-3.1.5/
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.6/wxWidgets-3.1.6.tar.bz2
+tar xvf wxWidgets-3.1.6.tar.bz2
+cd wxWidgets-3.1.6/
 mkdir gtk-build
 cd gtk-build/
 ../configure --disable-shared --enable-unicode
@@ -115,7 +115,7 @@ sudo make install
 
 ## 4. Tweak FreeFileSync code
 
-Even with the latest dependencies, some code tweaks are needed.
+Even with usign the latest dependencies, some code tweaks are needed.
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
@@ -149,17 +149,17 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.18_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.20_Source/FreeFileSync/Source. 
 
 Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.18_Source/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.18_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.20_Source/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
 
-# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.18}
+# Running FreeFileSync on another Raspberry Pi {UNTESTED/UNVERIFIED for v11.20}
 You don't need to build anything again on the other Raspberry Pi hosts but you will need to copy over the various libraries and other dependencies so the executable can run.
 Compilation made and tested on Raspberry Pi 4 w/4GB RAM using clean updated Raspberry Pi OS on 22.11.2020
 
