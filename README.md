@@ -8,7 +8,7 @@ This version of instruction apply to the following:
 Item  | Release/Version
 ------------ | -------------
 Raspberry Pi OS (Raspbian) | ```Release 4.0  Nov 2021```
-FreeFileSync | ```v11.18```
+FreeFileSync | ```v11.20```
 
 ## 1. Download and extract the FreeFilesSync source code
 
