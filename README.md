@@ -43,8 +43,8 @@ The following dependencies could not be installed via `apt-get` and need to be c
 
 ### 3.1 gcc w/ good C++20 support
 
-FreeFileSync requires a C++ compiler that supports the C++20 standard.
-The default version of gcc with Raspbian Jan2021 is 8.3.0 and does not have all the necessary support.
+FreeFileSync requires a C++ compiler that has good support of the C++20 standard.
+The default version of gcc with RaspberyPi OS does not have all the necessary support.
 
 Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only C/C++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
@@ -87,7 +87,7 @@ sudo ldconfig
 ```
 
 ### 3.3 libcurl
-Installed the latest version of curl available at the time (7.82.0)- for 11.18 noticed that curl 7.80.0 didn't work
+Installed the latest version of curl available at the time (7.82.0)- for FFS11.18, noticed that curl 7.80.0 didn't work
 ```
 wget https://curl.se/download/curl-7.82.0.tar.gz
 tar xvf curl-7.82.0.tar.gz
