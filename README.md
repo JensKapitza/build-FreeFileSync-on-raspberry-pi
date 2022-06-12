@@ -1,7 +1,7 @@
 # build-FreeFileSync-on-raspberry-pi
 FreeFileSync is a great open source file synchronization tool.
 Building from source on linux is straightfoward *if* all the necessary dependencies are installed.
-These instruction capture the necessary steps for installing the necessary dependencies and compiling FreeFileSync on Raspberry Pi OS (Raspbian)
+These instruction capture the necessary steps for installing the necessary dependencies and compiling FreeFileSync on 32-bit Raspberry Pi OS (formerly referred to as Raspbian)
 
 This version of instruction apply to the following:
 
@@ -45,6 +45,8 @@ The following dependencies could not be installed via `apt-get` and need to be c
 
 FreeFileSync requires good support of the C++20 standard and often takes advantage of the latest refinements once available across the major compilers (see https://freefilesync.org/vision.php for some background). As such, if you want to compile FreeFileSync on Raspberry Pi OS, you'll need a fresh version of gcc (the default version of gcc with RaspberyPi OS will not have all the necessary support).
 
+For FFS v11.21, you'll need at least gcc 12.1.0
+
 Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 12.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only C/C++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
 Note the build needs about 8 GB of free disk space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
@@ -86,7 +88,7 @@ sudo ldconfig
 ```
 
 ### 3.3 libcurl
-Installed the version of curl suggested by Bugs.txt (curl v7.83.0)
+Installed the version of curl (curl v7.83.0) as suggested in the Bugs.txt file 
 ```
 wget https://curl.se/download/curl-7.83.0.tar.gz
 tar xvf curl-7.83.0.tar.gz
