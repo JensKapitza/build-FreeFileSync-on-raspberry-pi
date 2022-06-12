@@ -7,19 +7,19 @@ This version of instruction apply to the following:
 
 Item  | Release/Version
 ------------ | -------------
-Raspberry Pi OS (Raspbian) | ```Release 4.0  Nov 2021```
-FreeFileSync | ```v11.20```
+Raspberry Pi OS (Raspbian) | ```Release 4.2  Apr 2022```
+FreeFileSync | ```v11.21```
 
 ## 1. Download and extract the FreeFilesSync source code
 
-As of this writing, the latest version of FreeFileSync is 11.20 and it can be downloaded from: 
+As of this writing, the latest version of FreeFileSync is 11.21 and it can be downloaded from: 
 
-https://freefilesync.org/download/FreeFileSync_11.20_Source.zip
+https://freefilesync.org/download/FreeFileSync_11.21_Source.zip
 
 For some reason, wget **DID NOT** successfuly download the file on the first try (instead it downloads a portion and silently exits). Simply try the wget command a second time or you can manually download it through a browser.
 
 Move the .zip file to the desired directory and uncompress
-```unzip FreeFileSync_11.20_Source.zip```
+```unzip FreeFileSync_11.21_Source.zip```
 
 ## 2. Install available dependencies via apt-get
 These instructions reflect building FreeFileSync using libgtk-3. This may lead to a non-optimal user experience- see:
@@ -43,10 +43,9 @@ The following dependencies could not be installed via `apt-get` and need to be c
 
 ### 3.1 gcc w/ good C++20 support
 
-FreeFileSync requires a C++ compiler that has good support of the C++20 standard.
-The default version of gcc with RaspberyPi OS does not have all the necessary support.
+FreeFileSync requires good support of the C++20 standard and often takes advantage of the latest refinements once available across the major compilers (see https://freefilesync.org/vision.php for some background). As such, if you want to compile FreeFileSync on Raspberry Pi OS, you'll need a fresh version of gcc (the default version of gcc with RaspberyPi OS will not have all the necessary support).
 
-Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 11.2.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only C/C++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
+Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 12.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only C/C++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
 Note the build needs about 8 GB of free disk space and takes about **4 hours** on the **Raspberry Pi 4 (4 GB)**, **over 6 hours** on the **Raspberry Pi 3B+** and **over 50 hours** on the **Raspberry Pi Zero**.
 
@@ -62,12 +61,12 @@ g++ --version
 
 Expected result:
 ```
-g++ (GCC) 11.2.0
+g++ (GCC) 12.1.0
 ```
 
 To ensure FreeFileSync can find the necessary libraries during runtime, copy the newly created libstdc++ lib to a standard Raspberry Pi OS location 
 ```
-sudo cp /usr/local/lib/libstdc++.so.6.0.29 /lib/arm-linux-gnueabihf/
+sudo cp /usr/local/lib/libstdc++.so.6.0.30 /lib/arm-linux-gnueabihf/
 sudo ldconfig
 ```
 
@@ -87,11 +86,11 @@ sudo ldconfig
 ```
 
 ### 3.3 libcurl
-Installed the latest version of curl available at the time (7.82.0)- for FFS11.18, noticed that curl 7.80.0 didn't work
+Installed the version of curl suggested by Bugs.txt (curl v7.83.0)
 ```
-wget https://curl.se/download/curl-7.82.0.tar.gz
-tar xvf curl-7.82.0.tar.gz
-cd curl-7.82.0/
+wget https://curl.se/download/curl-7.83.0.tar.gz
+tar xvf curl-7.83.0.tar.gz
+cd curl-7.83.0/
 mkdir build
 cd build/
 ../configure --with-openssl --with-libssh2 --enable-versioned-symbols
@@ -100,8 +99,8 @@ sudo make install
 ```
 
 ### 3.4 wxWidgets
-Starting with FreeFileSync v11.20, the minimum version of WxWidgets is 3.1.6.
-Luckily wxWidgets 3.1.6 version compiles without problem:
+Starting with FreeFileSync v11.20, the minimum version for WxWidgets is 3.1.6.
+Build instructions are:
 ```
 wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.6/wxWidgets-3.1.6.tar.bz2
 tar xvf wxWidgets-3.1.6.tar.bz2
@@ -115,7 +114,7 @@ sudo make install
 
 ## 4. Tweak FreeFileSync code
 
-Even with usign the latest dependencies, some code tweaks are needed.
+Even with the needed dependencies, some code tweaks are needed (see BUGS.txt in the top-level directory for a complete reference)
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
@@ -140,6 +139,15 @@ change: cxxFlags  += -isystem/usr/include/gtk-2.0
 to:     cxxFlags  += -isystem/usr/include/gtk-3.0
 ```
 
+#### 4.2.1 Update FreeFileSync/Source/Application.cpp to update old filepath parsing
+It looks like the code that supports finding and loading the gtk3 css file didn't get updated when some of the underlying path handling functions got revised in v11.21
+
+On line 96:
+```
+change:  (getResourceDirPf() + fileName).c_str(), //const gchar* path,
+to:      (appendPath(getResourceDirPath(),fileName)).c_str(), //const gchar* path,
+```
+
 ### 4.3 [Optional] FreeFileSync/Source/Makefile
 
 To make the exectuable easier to run, add after line 28:
@@ -149,12 +157,12 @@ LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 
 ## 5. Compile
 
-Run ```make``` in folder FreeFileSync_11.20_Source/FreeFileSync/Source. 
+Run ```make``` in folder FreeFileSync_11.21/FreeFileSync/Source. 
 
-Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.18_Source/FreeFileSync/Build/Bin. 
+Assuming the command completed without fatal errors, the binary should be waiting for you in FreeFileSync_11.21/FreeFileSync/Build/Bin. 
 
 ## 6. Run FreeFileSync
-Go to the FreeFileSync_11.20_Source/FreeFileSync/Build/Bin directory and enter:
+Go to the FreeFileSync_11.21/FreeFileSync/Build/Bin directory and enter:
 ```
 ./FreeFileSync_armv7l
 ```
