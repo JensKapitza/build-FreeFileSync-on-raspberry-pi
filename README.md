@@ -43,7 +43,7 @@ The following dependencies could not be installed via `apt-get` and need to be c
 
 ### 3.1 gcc w/ good C++20 support
 
-FreeFileSync requires good support of the C++20 standard and often takes advantage of the latest refinements once available across the major compilers (see https://freefilesync.org/vision.php for some background). As such, if you want to compile FreeFileSync on Raspberry Pi OS, you'll need a recent version of gcc (the default version of gcc with RaspberyPi OS will not have all the necessary support).
+FreeFileSync requires good support of the C++20 standard and often takes advantage of the latest refinements once available across the major compilers (see https://freefilesync.org/vision.php for some background). As such, if you want to compile FreeFileSync on Raspberry Pi OS, you'll need a fresh version of gcc (the default version of gcc with RaspberyPi OS will not have all the necessary support).
 
 Follow the instruction at: https://www.raspberrypi.org/forums/viewtopic.php?t=239609 to build and install the gcc 12.1.0 with minor modifications. See [build_gcc.sh](build_gcc.sh) for the script with only C/C++ languages enabled. Before running, be sure to review and update the config in [build_gcc.sh](build_gcc.sh) according to your device (default is Raspberry Pi 4).
 
@@ -114,7 +114,7 @@ sudo make install
 
 ## 4. Tweak FreeFileSync code
 
-Even with usign the latest dependencies, some code tweaks are needed (see BUGS.txt in the top-level directory for complete references)
+Even with the needed dependencies, some code tweaks are needed (see BUGS.txt in the top-level directory for a complete reference)
 
 ### 4.1 FreeFileSync/Source/afs/sftp.cpp
 
@@ -140,13 +140,13 @@ to:     cxxFlags  += -isystem/usr/include/gtk-3.0
 ```
 
 #### 4.2.1 Update FreeFileSync/Source/Application.cpp to update old filepath parsing
-It looks like the code that supports finding and loading the gtk3 css file didn't get updated when some of the underlying path handling functions got updated in 11.21
+It looks like the code that supports finding and loading the gtk3 css file didn't get updated when some of the underlying path handling functions got revised in v11.21
 
 On line 96:
 ```
 change:  (getResourceDirPf() + fileName).c_str(), //const gchar* path,
 to:      (appendPath(getResourceDirPath(),fileName)).c_str(), //const gchar* path,
-
+```
 
 ### 4.3 [Optional] FreeFileSync/Source/Makefile
 
