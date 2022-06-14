@@ -156,6 +156,14 @@ To make the exectuable easier to run, add after line 28:
 ```
 LINKFLAGS += -Wl,-rpath -Wl,\$$ORIGIN
 ```
+### 4.4 [Optional] Populate Google client_id and client_key in Freefilesync/Source/afs/gdrive.cpp
+Information about Google Drive support on self-compiled instances was mentioned at https://freefilesync.org/forum/viewtopic.php?t=8171
+
+If you set up your own Google project with its own Client ID and Client Secret (free for personal testing/use), add that information in between the " " on lines 89 and 90:
+```
+std::string getGdriveClientId    () { return ""; } // => replace with live credentials
+std::string getGdriveClientSecret() { return ""; } //
+```
 
 ## 5. Compile
 
@@ -238,12 +246,6 @@ Go to /home/pi/Desktop/FFS_11.4_ARM/Bin/
 ```
 
 # Troubleshooting & Known Issues
-
-## Can't add Google Drive Connection
-When attempting to add a Google Drive Connection, a tab in the chromium browser opens with an authentication error:
-> Error 400: invalid_request
-> 
-> Missing required parameter: client_id
 
 ## Error due to missing shared libraries
 > *./FreeFileSync_armv7l: error while loading shared libraries: libssl.so.3: cannot open shared object file: No such file or directory*
